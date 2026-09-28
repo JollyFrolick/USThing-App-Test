@@ -75,3 +75,37 @@ Read our [Upgrade Guide](https://ignitecookbook.com/docs/recipes/UpdatingIgnite)
 💬 Join us on [Slack](https://join.slack.com/t/infiniteredcommunity/shared_invite/zt-1f137np4h-zPTq_CbaRFUOR_glUFs2UA) to discuss.
 
 📰 Make our Editor-in-chief happy by [reading the React Native Newsletter](https://reactnativenewsletter.com/).
+
+## Local course data
+
+Run `yarn prepare:courses` from the project root after changing the supplied
+`courses.json`. The script validates the required fields and unique semester/course
+IDs, then writes `app/data/courses.json` with only the fields in `Course`.
+The original dataset is unchanged; all semesters and prerequisite text are retained.
+Keep the generated file in the repository so the app can run without preparation.
+
+Both course screens use `app/services/courses.ts`. It loads the reduced JSON locally
+and builds semester and course lookup indexes once. The catalogue currently shows
+2026-27 Fall (`2610`), sorted by course code. The service also exposes semester and
+department lists for future filters. Details are matched by both course ID and semester.
+No network connection is required for course data.
+
+This approach still loads all prepared records into memory at startup. Semester
+splitting is a possible later improvement if device measurements show slow startup.
+The catalogue supports semester and department selection and code/title search.
+
+### Prerequisite exploration
+
+The detail screen extracts explicit four-letter department codes plus four-digit
+course numbers and optional letter suffixes (for example `COMP 1022P`). Spaces and
+case are normalized, and repeated references in one sentence are deduplicated.
+Original prerequisite text is preserved because extraction does not interpret
+AND/OR, grades, programme restrictions, or shorthand references without a prefix.
+
+Referenced courses are resolved only within the selected semester. Missing records
+are labelled instead of substituting a different semester. Each available course
+opens its details, and expandable rows reveal deeper prerequisites on demand.
+A path of ancestor course codes stops cycles; the same course can still appear in
+separate branches. Courses without prerequisites and text without extractable
+course codes have explicit explanations. Expansion is local to each detail screen.
+

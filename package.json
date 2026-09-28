@@ -4,6 +4,7 @@
   "private": true,
   "main": "index.tsx",
   "scripts": {
+    "prepare:courses": "tsx scripts/prepare-courses.ts",
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
